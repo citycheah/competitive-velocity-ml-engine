@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: stg_youtube_videos
+    description: "Standardized video metadata and quarantined target metrics extracted at publication."
+    columns:
+      - name: video_id
+        description: "Unique alphanumeric YouTube video ID"
+        tests:
+          - unique
+          - not_null
+      - name: channel_id
+        description: "Foreign key referencing competitor channel"
+        tests:
+          - not_null
+      - name: published_at
+        description: "UTC publication timestamp (t0 anchor)"
+        tests:
+          - not_null
+      - name: published_epoch
+        description: "UNIX epoch seconds of publication for bounded range windows"
+        tests:
+          - not_null
+      - name: title
+        description: "Video title string knowable at publication"
+        tests:
+          - not_null
+      - name: duration_seconds
+        description: "Video duration in integer seconds"
+        tests:
+          - not_null
+      - name: is_short
+        description: "Boolean flag true if duration <= 60 seconds"
+        tests:
+          - not_null
+      - name: target_log_engagement
+        description: "Quarantined log composite engagement used strictly for baseline and target calculation"
+        tests:
+          - not_null
+
+  - name: stg_youtube_channels
+    description: "Competitor channel metadata and subscriber baseline."
+    columns:
+      - name: channel_id
+        description: "Unique channel identifier (UC...)"
+        tests:
+          - unique
+          - not_null
+      - name: channel_title
+        description: "Display name of competitor channel"
+        tests:
+          - not_null
+      - name: subscriber_count
+        description: "Channel subscriber count at snapshot"
+        tests:
+          - not_null

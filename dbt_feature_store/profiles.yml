@@ -1,0 +1,19 @@
+competitive_velocity:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DBT_DUCKDB_PATH', 'data/feature_store.duckdb') }}"
+      schema: "{{ env_var('DBT_SCHEMA', 'main') }}"
+      threads: 4
+      extensions:
+        - parquet
+    prod:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT_ID', 'dev-competitive-velocity') }}"
+      dataset: "{{ env_var('BQ_DATASET', 'competitive_velocity_store') }}"
+      threads: 8
+      timeout_seconds: 300
+      priority: interactive
+      retries: 2

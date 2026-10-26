@@ -1,0 +1,56 @@
+{
+  "benchmark_scores": [
+    {
+      "model_name": "1. Heuristic Baseline",
+      "feature_set": "Cadence Blitz Rule",
+      "pr_auc": 0.1718,
+      "roc_auc": 0.5013,
+      "brier_score": 0.1979,
+      "log_loss": 0.5806,
+      "precision_top_decile": 0.1778,
+      "lift_top_decile": 1.05,
+      "calibrated": false
+    },
+    {
+      "model_name": "2. ElasticNet Linear",
+      "feature_set": "Standardized Tabular + SVD",
+      "pr_auc": 0.3076,
+      "roc_auc": 0.6541,
+      "brier_score": 0.2766,
+      "log_loss": 0.7902,
+      "precision_top_decile": 0.3778,
+      "lift_top_decile": 2.22,
+      "calibrated": false
+    },
+    {
+      "model_name": "3. LightGBM (v1)",
+      "feature_set": "Core Tabular + SVD (No Interactions)",
+      "pr_auc": 0.3359,
+      "roc_auc": 0.6696,
+      "brier_score": 0.1986,
+      "log_loss": 0.5806,
+      "precision_top_decile": 0.3778,
+      "lift_top_decile": 2.22,
+      "calibrated": false
+    },
+    {
+      "model_name": "4. Calibrated LightGBM (v2)",
+      "feature_set": "14 Features + Interactions + SVD + Isotonic",
+      "pr_auc": 0.3197,
+      "roc_auc": 0.6815,
+      "brier_score": 0.1339,
+      "log_loss": 0.4282,
+      "precision_top_decile": 0.3333,
+      "lift_top_decile": 1.96,
+      "calibrated": true
+    }
+  ],
+  "champion_threshold": 0.3682,
+  "champion_precision": 0.4054,
+  "champion_recall": 0.1923,
+  "champion_lift": 2.3857,
+  "train_records": 2601,
+  "test_records": 459,
+  "test_mean_psi": 0.1431146501293169,
+  "test_drift_status": "drift_alert"
+}

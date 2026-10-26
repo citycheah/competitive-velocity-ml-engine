@@ -1,0 +1,74 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+ENV/
+
+# Data artifacts and local storage
+data/raw/*.parquet
+data/raw/*.json
+data/processed/
+data/*.duckdb
+data/*.duckdb.wal
+!data/fixtures/
+!data/fixtures/*.parquet
+
+# Model artifacts
+models/*.joblib
+models/**/*.joblib
+models/*.onnx
+models/**/*.onnx
+models/*.pkl
+models/**/*.pkl
+models/baseline_backup/
+!models/.gitkeep
+
+# dbt compilation targets & telemetry
+dbt_feature_store/target/
+dbt_feature_store/dbt_packages/
+dbt_feature_store/logs/
+.user.yml
+*.user.yml
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets & Environment variables
+.env*
+!.env.example
+*.key
+*.pem
+credentials.json
+client_secrets.json
+
+# Test & Coverage artifacts
+.coverage
+htmlcov/
+.pytest_cache/

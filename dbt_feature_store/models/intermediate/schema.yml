@@ -1,0 +1,99 @@
+version: 2
+
+models:
+  - name: int_video_cadence
+    description: "Point-in-time upload cadence blitzes, intervals, and format volatility bounded strictly prior to t0."
+    columns:
+      - name: video_id
+        description: "Primary key of video."
+        tests:
+          - unique
+          - not_null
+
+      - name: channel_id
+        description: "Foreign key to channel."
+        tests:
+          - not_null
+
+      - name: published_epoch
+        description: "Publication timestamp in integer epoch seconds."
+        tests:
+          - not_null
+
+      - name: channel_upload_blitz_24h
+        description: "Count of channel uploads in [t0 - 24h, t0 - 1s] strictly excluding current video."
+        tests:
+          - not_null
+
+      - name: channel_upload_blitz_7d
+        description: "Count of channel uploads in [t0 - 7d, t0 - 1s] strictly excluding current video."
+        tests:
+          - not_null
+
+      - name: hours_since_last_upload
+        description: "Hours elapsed since prior channel upload, with cold start imputed to 720.0."
+        tests:
+          - not_null
+
+      - name: is_first_channel_upload
+        description: "Binary flag indicating whether this is the channel's first upload."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: channel_format_volatility_30d
+        description: "Normalized 30-day shorts format volatility: 4*p*(1-p) in [0.0, 1.0]."
+        tests:
+          - not_null
+
+  - name: int_channel_rolling_stats
+    description: "Trailing 30-day channel rolling statistics over log-weighted composite engagement strictly prior to t0."
+    columns:
+      - name: video_id
+        description: "Primary key of video."
+        tests:
+          - unique
+          - not_null
+
+      - name: channel_id
+        description: "Foreign key to channel."
+        tests:
+          - not_null
+
+      - name: published_epoch
+        description: "Publication timestamp in integer epoch seconds."
+        tests:
+          - not_null
+
+      - name: weighted_engagement
+        description: "Linear composite engagement: views + 10*likes + 20*comments."
+        tests:
+          - not_null
+
+      - name: log_weighted_engagement
+        description: "ln(1 + weighted_engagement)."
+        tests:
+          - not_null
+
+      - name: channel_upload_count_30d
+        description: "Number of preceding uploads in [t0 - 30d, t0 - 1s]."
+        tests:
+          - not_null
+
+      - name: effective_baseline_log_mean_30d
+        description: "Coalesced baseline log engagement mean mu with cold-start fallback."
+        tests:
+          - not_null
+
+      - name: effective_baseline_log_std_30d
+        description: "Coalesced baseline log engagement stddev sigma with cold-start fallback."
+        tests:
+          - not_null
+
+      - name: is_cold_start_target
+        description: "Binary indicator if trailing 30d sample size is insufficient (< 3)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]

@@ -1,0 +1,181 @@
+version: 2
+
+models:
+  - name: fct_video_features_t0
+    description: >
+      Point-in-Time Video Feature Mart evaluated at exact publication timestamp t0.
+      Guarantees zero maturity bias, zero null leaks across all feature columns,
+      and scale-invariant breakout classification target (Z >= 1.0).
+    columns:
+      - name: video_id
+        description: "Primary key. Unique YouTube video identifier."
+        tests:
+          - unique
+          - not_null
+
+      - name: channel_id
+        description: "Foreign key referencing competitor channel in stg_youtube_channels."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_youtube_channels')
+              field: channel_id
+
+      - name: published_at
+        description: "UTC timestamp of publication t0."
+        tests:
+          - not_null
+
+      - name: published_epoch
+        description: "UNIX epoch seconds corresponding to published_at."
+        tests:
+          - not_null
+
+      - name: channel_title
+        description: "Competitor channel name."
+        tests:
+          - not_null
+
+      - name: channel_subscriber_count
+        description: "Competitor channel subscriber count snapshot at t0."
+        tests:
+          - not_null
+
+      - name: topic_category
+        description: "Channel content category niche."
+        tests:
+          - not_null
+
+      - name: title
+        description: "Video title string at t0."
+        tests:
+          - not_null
+
+      - name: description
+        description: "Video description string at t0."
+        tests:
+          - not_null
+
+      - name: duration_seconds
+        description: "Media duration in seconds."
+        tests:
+          - not_null
+
+      - name: is_short
+        description: "Boolean indicator for YouTube Shorts (duration <= 60s)."
+        tests:
+          - not_null
+
+      - name: tags_count
+        description: "Count of tags associated with upload at t0."
+        tests:
+          - not_null
+
+      - name: publish_hour_of_day
+        description: "Hour of publication (0-23 UTC)."
+        tests:
+          - not_null
+
+      - name: publish_day_of_week
+        description: "Day of week of publication (0-6)."
+        tests:
+          - not_null
+
+      - name: is_weekend
+        description: "Binary weekend upload indicator (1 if Sat/Sun, else 0)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: title_length_chars
+        description: "Total character count of title."
+        tests:
+          - not_null
+
+      - name: title_word_count
+        description: "Total word count of title."
+        tests:
+          - not_null
+
+      - name: channel_upload_blitz_24h
+        description: "Count of channel uploads in trailing 24h strictly prior to t0."
+        tests:
+          - not_null
+
+      - name: channel_upload_blitz_7d
+        description: "Count of channel uploads in trailing 7 days strictly prior to t0."
+        tests:
+          - not_null
+
+      - name: hours_since_last_upload
+        description: "Elapsed hours since creator's previous upload (cold-start default 720.0)."
+        tests:
+          - not_null
+
+      - name: channel_format_volatility_30d
+        description: "Normalized format volatility [0.0, 1.0] over trailing 30 days."
+        tests:
+          - not_null
+
+      - name: channel_historical_avg_views_30d
+        description: "Historical average views over trailing 30 days prior to t0 (offline retrospective baseline proxy across prior uploads)."
+        tests:
+          - not_null
+
+      - name: channel_historical_avg_engagement_30d
+        description: "Rolling 30-day mean of log-weighted engagement strictly prior to t0 (offline retrospective baseline proxy across prior uploads)."
+        tests:
+          - not_null
+
+      - name: channel_historical_std_engagement_30d
+        description: "Rolling 30-day stddev of log-weighted engagement strictly prior to t0."
+        tests:
+          - not_null
+
+      - name: target_views_7d
+        description: "Quarantined 7-day realized view count (ground truth only)."
+        tests:
+          - not_null
+
+      - name: target_likes_7d
+        description: "Quarantined 7-day realized like count (ground truth only)."
+        tests:
+          - not_null
+
+      - name: target_comments_7d
+        description: "Quarantined 7-day realized comment count (ground truth only)."
+        tests:
+          - not_null
+
+      - name: target_views_30d
+        description: "Quarantined 30-day realized view count (ground truth only)."
+        tests:
+          - not_null
+
+      - name: target_likes_30d
+        description: "Quarantined 30-day realized like count (ground truth only)."
+        tests:
+          - not_null
+
+      - name: target_comments_30d
+        description: "Quarantined 30-day realized comment count (ground truth only)."
+        tests:
+          - not_null
+
+      - name: target_weighted_engagement
+        description: "Quarantined composite weighted engagement score."
+        tests:
+          - not_null
+
+      - name: engagement_zscore_30d
+        description: "Continuous Z-score relative to channel trailing 30-day baseline."
+        tests:
+          - not_null
+
+      - name: is_breakout
+        description: "Binary breakout classification target (1 if Z >= 1.0, else 0)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]

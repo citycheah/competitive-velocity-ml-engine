@@ -1,0 +1,110 @@
+name: Daily Ingestion, Inference & Drift Monitoring
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      ingest_mode:
+        description: 'Ingestion mode (live or synthetic)'
+        required: true
+        default: 'synthetic'
+        type: choice
+        options:
+          - synthetic
+          - live
+      days:
+        description: 'Backfill window in days'
+        required: false
+        default: '7'
+
+jobs:
+  pipeline-execution:
+    name: Run Ingestion, dbt Marts, Inference & Drift Monitoring
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install project dependencies
+        run: |
+          uv sync --all-extras
+
+      - name: Step 1 - Ingest Media Stream
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          MODE="${{ github.event.inputs.ingest_mode || 'synthetic' }}"
+          DAYS="${{ github.event.inputs.days || '7' }}"
+          
+          if [ "$MODE" = "live" ] && [ -n "$YOUTUBE_API_KEY" ]; then
+            echo "Running Live YouTube Ingestion (UU Quota-Optimized Playlist Chaining)..."
+            uv run python -m src.ingest.cli --mode live --days "$DAYS"
+          else
+            echo "Running Local-First Synthetic Ingestion Mode (Zero Cloud Credentials Required)..."
+            uv run python -m src.ingest.cli --mode synthetic --channels 30 --days "$DAYS"
+          fi
+
+      - name: Step 2 - Execute Point-in-Time Feature Store (dbt & DuckDB)
+        run: |
+          echo "Executing dbt build and data tests against DuckDB..."
+          uv run python scripts/run_dbt.py
+
+      - name: Step 3 - Retrain / Evaluate Model Ladder & Calibrate
+        run: |
+          echo "Evaluating champion model and checking probability calibration..."
+          uv run python -m src.training.train_and_calibrate
+
+      - name: Step 4 - Execute PSI Feature Drift Monitoring
+        run: |
+          echo "Calculating Population Stability Index (PSI) against baseline profile..."
+          uv run python -c "
+          import pandas as pd, duckdb, joblib
+          from src.monitoring.drift_psi import FeatureDriftMonitor
+          
+          con = duckdb.connect('data/feature_store.duckdb', read_only=True)
+          df = con.execute('SELECT * FROM main.fct_video_features_t0 ORDER BY published_epoch DESC LIMIT 500').df()
+          con.close()
+          
+          pipe = joblib.load('models/feature_pipeline.joblib')
+          X = pipe.transform(df)
+          feature_names = pipe.get_feature_names_out()
+          recent_df = pd.DataFrame(X, columns=feature_names)
+          
+          monitor = FeatureDriftMonitor().load_baseline_profile('models/baseline_drift_profile.json')
+          report = monitor.compute_drift(recent_df)
+          
+          print(f'Overall Drift Status: {report.overall_status.upper()}')
+          print(f'Mean PSI: {report.mean_psi:.4f} | Max PSI: {report.max_psi:.4f}')
+          if report.drifted_features:
+              print(f'ALERT: Critical drift detected on: {report.drifted_features}')
+          "
+
+      - name: Step 5 - Headless Smoke Test for Streamlit Dashboard
+        run: |
+          echo "Verifying Streamlit dashboard headlessly..."
+          uv run python -c "
+          from app.streamlit_app import load_data_and_artifacts
+          df, model, pipe, thresh, metrics = load_data_and_artifacts()
+          print(f'Streamlit verified: {len(df)} records, model loaded successfully.')
+          "
+
+      - name: Upload Pipeline Artifacts & Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pipeline-models-and-metrics
+          path: |
+            models/
+            data/raw/

@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: raw_youtube
+    description: "Raw competitor media records dropped into data/raw as Parquet files"
+    schema: "{{ env_var('DBT_RAW_SCHEMA', 'main') }}"
+    tables:
+      - name: youtube_videos
+        description: "Raw video metadata and quarantined post-publication targets"
+        meta:
+          external_location: "{{ env_var('RAW_VIDEOS_PATH', 'data/raw/youtube_videos.parquet') }}"
+      - name: youtube_channels
+        description: "Raw competitor channel metadata and subscriber baselines"
+        meta:
+          external_location: "{{ env_var('RAW_CHANNELS_PATH', 'data/raw/youtube_channels.parquet') }}"

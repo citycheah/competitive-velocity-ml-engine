@@ -1,0 +1,460 @@
+version: "1.0"
+channels:
+  # =========================================================================
+  # Niche 1: AI & Tech Engineering (10 channels)
+  # =========================================================================
+  - channel_id: "UC_AIT_MEGA_001"
+    channel_title: "NeuralArchitects"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mega"
+    subscriber_tier: "tier1"
+    subscriber_count: 2850000
+    baseline_cadence_days: 2.85
+    cadence_lambda: 0.35
+    shorts_ratio: 0.15
+    log_mean: 13.10
+    log_std: 0.55
+    country: "US"
+    created_at: "2019-03-15T00:00:00Z"
+
+  - channel_id: "UC_AIT_MEGA_002"
+    channel_title: "SiliconVector"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mega"
+    subscriber_tier: "tier1"
+    subscriber_count: 1750000
+    baseline_cadence_days: 2.50
+    cadence_lambda: 0.40
+    shorts_ratio: 0.20
+    log_mean: 12.65
+    log_std: 0.55
+    country: "US"
+    created_at: "2020-01-10T00:00:00Z"
+
+  - channel_id: "UC_AIT_MID_001"
+    channel_title: "KarpathyLogs"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 780000
+    baseline_cadence_days: 2.22
+    cadence_lambda: 0.45
+    shorts_ratio: 0.25
+    log_mean: 11.75
+    log_std: 0.55
+    country: "US"
+    created_at: "2021-06-20T00:00:00Z"
+
+  - channel_id: "UC_AIT_MID_002"
+    channel_title: "TransformerLab"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 560000
+    baseline_cadence_days: 2.00
+    cadence_lambda: 0.50
+    shorts_ratio: 0.20
+    log_mean: 11.40
+    log_std: 0.55
+    country: "US"
+    created_at: "2021-09-01T00:00:00Z"
+
+  - channel_id: "UC_AIT_MID_003"
+    channel_title: "QuantumComputeNow"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 430000
+    baseline_cadence_days: 2.85
+    cadence_lambda: 0.35
+    shorts_ratio: 0.15
+    log_mean: 11.15
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-02-14T00:00:00Z"
+
+  - channel_id: "UC_AIT_MID_004"
+    channel_title: "GPUHackers"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 320000
+    baseline_cadence_days: 1.82
+    cadence_lambda: 0.55
+    shorts_ratio: 0.30
+    log_mean: 10.85
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-05-18T00:00:00Z"
+
+  - channel_id: "UC_AIT_MID_005"
+    channel_title: "EdgeAIPioneers"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 210000
+    baseline_cadence_days: 2.50
+    cadence_lambda: 0.40
+    shorts_ratio: 0.25
+    log_mean: 10.45
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-11-05T00:00:00Z"
+
+  - channel_id: "UC_AIT_UPS_001"
+    channel_title: "LocalLLMRunner"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 115000
+    baseline_cadence_days: 1.43
+    cadence_lambda: 0.70
+    shorts_ratio: 0.45
+    log_mean: 9.80
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-03-22T00:00:00Z"
+
+  - channel_id: "UC_AIT_UPS_002"
+    channel_title: "PromptToCode"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 82000
+    baseline_cadence_days: 1.54
+    cadence_lambda: 0.65
+    shorts_ratio: 0.50
+    log_mean: 9.45
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-07-11T00:00:00Z"
+
+  - channel_id: "UC_AIT_UPS_003"
+    channel_title: "VisionModelDev"
+    niche: "ai_tech"
+    topic_category: "AI & Tech"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 45000
+    baseline_cadence_days: 1.67
+    cadence_lambda: 0.60
+    shorts_ratio: 0.40
+    log_mean: 8.85
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-10-30T00:00:00Z"
+
+  # =========================================================================
+  # Niche 2: Macro & Quantitative Finance (10 channels)
+  # =========================================================================
+  - channel_id: "UC_FIN_MEGA_001"
+    channel_title: "TheMacroDesk"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "mega"
+    subscriber_tier: "tier1"
+    subscriber_count: 3400000
+    baseline_cadence_days: 3.33
+    cadence_lambda: 0.30
+    shorts_ratio: 0.10
+    log_mean: 13.35
+    log_std: 0.55
+    country: "US"
+    created_at: "2018-08-12T00:00:00Z"
+
+  - channel_id: "UC_FIN_MID_001"
+    channel_title: "YieldCurveAlpha"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 890000
+    baseline_cadence_days: 2.50
+    cadence_lambda: 0.40
+    shorts_ratio: 0.15
+    log_mean: 11.90
+    log_std: 0.55
+    country: "US"
+    created_at: "2020-04-05T00:00:00Z"
+
+  - channel_id: "UC_FIN_MID_002"
+    channel_title: "QuantTerminal"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 670000
+    baseline_cadence_days: 2.22
+    cadence_lambda: 0.45
+    shorts_ratio: 0.15
+    log_mean: 11.60
+    log_std: 0.55
+    country: "US"
+    created_at: "2021-01-19T00:00:00Z"
+
+  - channel_id: "UC_FIN_MID_003"
+    channel_title: "CapitalAllocatorsDaily"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 480000
+    baseline_cadence_days: 2.85
+    cadence_lambda: 0.35
+    shorts_ratio: 0.10
+    log_mean: 11.30
+    log_std: 0.55
+    country: "US"
+    created_at: "2021-08-14T00:00:00Z"
+
+  - channel_id: "UC_FIN_MID_004"
+    channel_title: "MarketRegimeBreakdown"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 360000
+    baseline_cadence_days: 2.22
+    cadence_lambda: 0.45
+    shorts_ratio: 0.20
+    log_mean: 11.00
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-03-25T00:00:00Z"
+
+  - channel_id: "UC_FIN_MID_005"
+    channel_title: "BondMarketInsider"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 240000
+    baseline_cadence_days: 2.85
+    cadence_lambda: 0.35
+    shorts_ratio: 0.15
+    log_mean: 10.60
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-07-08T00:00:00Z"
+
+  - channel_id: "UC_FIN_UPS_001"
+    channel_title: "OptionsVolatilityLab"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 125000
+    baseline_cadence_days: 1.54
+    cadence_lambda: 0.65
+    shorts_ratio: 0.35
+    log_mean: 9.90
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-01-15T00:00:00Z"
+
+  - channel_id: "UC_FIN_UPS_002"
+    channel_title: "CryptoOrderBook"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 98000
+    baseline_cadence_days: 1.33
+    cadence_lambda: 0.75
+    shorts_ratio: 0.40
+    log_mean: 9.65
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-04-12T00:00:00Z"
+
+  - channel_id: "UC_FIN_UPS_003"
+    channel_title: "MacroFlowTracker"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 68000
+    baseline_cadence_days: 1.82
+    cadence_lambda: 0.55
+    shorts_ratio: 0.30
+    log_mean: 9.30
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-08-01T00:00:00Z"
+
+  - channel_id: "UC_FIN_UPS_004"
+    channel_title: "HedgeFundTeardown"
+    niche: "macro_finance"
+    topic_category: "Finance"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 32000
+    baseline_cadence_days: 2.00
+    cadence_lambda: 0.50
+    shorts_ratio: 0.25
+    log_mean: 8.55
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-11-17T00:00:00Z"
+
+  # =========================================================================
+  # Niche 3: Data Science & Developer Tools (10 channels)
+  # =========================================================================
+  - channel_id: "UC_DAT_MEGA_001"
+    channel_title: "PythonSpeedrun"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mega"
+    subscriber_tier: "tier1"
+    subscriber_count: 2200000
+    baseline_cadence_days: 2.22
+    cadence_lambda: 0.45
+    shorts_ratio: 0.30
+    log_mean: 12.85
+    log_std: 0.55
+    country: "US"
+    created_at: "2019-05-10T00:00:00Z"
+
+  - channel_id: "UC_DAT_MEGA_002"
+    channel_title: "DataStackDaily"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mega"
+    subscriber_tier: "tier1"
+    subscriber_count: 1600000
+    baseline_cadence_days: 2.00
+    cadence_lambda: 0.50
+    shorts_ratio: 0.25
+    log_mean: 12.55
+    log_std: 0.55
+    country: "US"
+    created_at: "2020-02-28T00:00:00Z"
+
+  - channel_id: "UC_DAT_MID_001"
+    channel_title: "MLOpsDecoded"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 710000
+    baseline_cadence_days: 1.82
+    cadence_lambda: 0.55
+    shorts_ratio: 0.30
+    log_mean: 11.65
+    log_std: 0.55
+    country: "US"
+    created_at: "2021-04-16T00:00:00Z"
+
+  - channel_id: "UC_DAT_MID_002"
+    channel_title: "PandasToRust"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 540000
+    baseline_cadence_days: 2.22
+    cadence_lambda: 0.45
+    shorts_ratio: 0.25
+    log_mean: 11.35
+    log_std: 0.55
+    country: "US"
+    created_at: "2021-10-09T00:00:00Z"
+
+  - channel_id: "UC_DAT_MID_003"
+    channel_title: "PolarsLab"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 420000
+    baseline_cadence_days: 2.00
+    cadence_lambda: 0.50
+    shorts_ratio: 0.35
+    log_mean: 11.10
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-01-20T00:00:00Z"
+
+  - channel_id: "UC_DAT_MID_004"
+    channel_title: "DuckDBEnthusiasts"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 350000
+    baseline_cadence_days: 1.82
+    cadence_lambda: 0.55
+    shorts_ratio: 0.30
+    log_mean: 10.90
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-06-11T00:00:00Z"
+
+  - channel_id: "UC_DAT_MID_005"
+    channel_title: "FeatureStoreDeepDive"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "mid"
+    subscriber_tier: "tier2"
+    subscriber_count: 230000
+    baseline_cadence_days: 2.50
+    cadence_lambda: 0.40
+    shorts_ratio: 0.20
+    log_mean: 10.55
+    log_std: 0.55
+    country: "US"
+    created_at: "2022-09-03T00:00:00Z"
+
+  - channel_id: "UC_DAT_UPS_001"
+    channel_title: "PyTorchHacker"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 110000
+    baseline_cadence_days: 1.33
+    cadence_lambda: 0.75
+    shorts_ratio: 0.45
+    log_mean: 9.75
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-02-18T00:00:00Z"
+
+  - channel_id: "UC_DAT_UPS_002"
+    channel_title: "VectorDBWeekly"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 75000
+    baseline_cadence_days: 1.43
+    cadence_lambda: 0.70
+    shorts_ratio: 0.50
+    log_mean: 9.40
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-06-04T00:00:00Z"
+
+  - channel_id: "UC_DAT_UPS_003"
+    channel_title: "StreamingDataOps"
+    niche: "data_dev_tools"
+    topic_category: "Data Science"
+    tier: "upstart"
+    subscriber_tier: "tier3"
+    subscriber_count: 38000
+    baseline_cadence_days: 1.67
+    cadence_lambda: 0.60
+    shorts_ratio: 0.40
+    log_mean: 8.70
+    log_std: 0.55
+    country: "US"
+    created_at: "2023-09-29T00:00:00Z"

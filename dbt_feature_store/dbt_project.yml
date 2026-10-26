@@ -1,0 +1,27 @@
+name: 'dbt_feature_store'
+version: '1.0.0'
+config-version: 2
+
+profile: 'competitive_velocity'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+docs-paths: ["docs"]
+asset-paths: ["assets"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  dbt_feature_store:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
