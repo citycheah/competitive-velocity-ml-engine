@@ -176,13 +176,22 @@ def chronological_train_test_split(
     if maturity_days_filter is not None and maturity_days_filter > 0:
         max_epoch = df_sorted["published_epoch"].max()
         cutoff_epoch = max_epoch - (maturity_days_filter * 86400)
-        train_df = train_df[train_df["published_epoch"] <= cutoff_epoch].copy()
-        logger.info(
-            "Applied %d-day maturity cutoff: retained %d training records (<= epoch %d)",
-            maturity_days_filter,
-            len(train_df),
-            cutoff_epoch,
-        )
+        filtered_train = train_df[train_df["published_epoch"] <= cutoff_epoch].copy()
+        if len(filtered_train) > 0:
+            train_df = filtered_train
+            logger.info(
+                "Applied %d-day maturity cutoff: retained %d training records (<= epoch %d)",
+                maturity_days_filter,
+                len(train_df),
+                cutoff_epoch,
+            )
+        else:
+            logger.warning(
+                "Maturity filter of %d days eliminated all training records (dataset span %.1f days). "
+                "Retaining unfiltered chronological training split to preserve pipeline execution.",
+                maturity_days_filter,
+                (max_epoch - df_sorted["published_epoch"].min()) / 86400,
+            )
 
     logger.info(
         "Chronological split completed: Train=%d records, Test=%d records (Holdout=%.1f%%)",

@@ -37,7 +37,7 @@ def ensure_raw_fixtures():
     if not videos_file.exists() or not channels_file.exists():
         config = SyntheticGeneratorConfig(
             channels_count=10,
-            days=30,
+            days=90,
             seed=42,
         )
         generator = SyntheticDataGenerator(config)

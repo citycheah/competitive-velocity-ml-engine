@@ -1,7 +1,7 @@
 # Competitive Velocity Engine - Verification Summary Report
 
 - **Verdict**: `PASSED`
-- **Timestamp**: `2026-10-26T11:22:05.116693+00:00`
+- **Timestamp**: `2026-10-26T13:32:35.822840+00:00`
 
 ## Stages Completed (13/13)
 
@@ -21,11 +21,11 @@
 
 ## Benchmark Metrics (Out-of-Time Holdout)
 
-- `optimal_threshold`: `0.3682`
-- `precision`: `0.4054`
-- `recall`: `0.1923`
-- `lift_over_base_rate`: `2.3857`
-- `pr_auc_calibrated_v2`: `0.3197`
-- `brier_score_calibrated_v2`: `0.1339`
-- `holdout_mean_psi`: `0.1431146501293169`
+- `optimal_threshold`: `0.2136`
+- `precision`: `0.1942`
+- `recall`: `0.6667`
+- `lift_over_base_rate`: `1.4045`
+- `pr_auc_calibrated_v2`: `0.1791`
+- `brier_score_calibrated_v2`: `0.1245`
+- `holdout_mean_psi`: `0.08170988901303944`
 - `holdout_drift_status`: `drift_alert`

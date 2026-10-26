@@ -76,8 +76,15 @@ def run_pipeline() -> int:
         videos_df, channels_df = generator.generate()
         assert len(channels_df) == 30
         assert len(videos_df) > 500
+
+        # Persist raw synthetic drops to data/raw/
+        raw_dir = root_dir / "data" / "raw"
+        raw_dir.mkdir(parents=True, exist_ok=True)
+        videos_df.to_parquet(raw_dir / "youtube_videos.parquet", index=False)
+        channels_df.to_parquet(raw_dir / "youtube_channels.parquet", index=False)
+
         report_data["stages"]["stage_2_ingestion"] = "PASSED"
-        print(f"  [+] Generated {len(videos_df)} video records across {len(channels_df)} channels.")
+        print(f"  [+] Generated and persisted {len(videos_df)} video records across {len(channels_df)} channels.")
 
         # Stage 3: t0 Quarantine
         print("\n[Stage 3/13] Enforcing Physical t0 Quarantine Barrier...")
@@ -87,10 +94,13 @@ def run_pipeline() -> int:
         print("  [+] Quarantine barrier verified: zero unprefixed mature metrics observable at t0.")
 
         # Stage 4: Feature Store Validation
-        print("\n[Stage 4/13] Point-in-Time Feature Store Validation (DuckDB)...")
+        print("\n[Stage 4/13] Point-in-Time Feature Store Compilation & Validation (DuckDB)...")
+        from scripts.run_dbt import run_dbt_command
+        dbt_code = run_dbt_command(command="build", target="dev")
+        if dbt_code != 0:
+            raise RuntimeError(f"dbt build failed with exit code {dbt_code}")
+
         db_path = root_dir / "data" / "feature_store.duckdb"
-        if not db_path.exists():
-            raise FileNotFoundError(f"DuckDB feature store missing at {db_path}. Run scripts.run_dbt first.")
         con = duckdb.connect(str(db_path), read_only=True)
         mart_count = con.execute("SELECT COUNT(*) FROM main.fct_video_features_t0").fetchone()[0]
         mart_df = con.execute("SELECT * FROM main.fct_video_features_t0 ORDER BY published_epoch ASC").df()
