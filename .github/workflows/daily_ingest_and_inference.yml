@@ -15,9 +15,8 @@ on:
           - synthetic
           - live
       days:
-        description: 'Backfill window in days'
+        description: 'Backfill window in days (defaults to 90 for synthetic, 7 for live)'
         required: false
-        default: '7'
 
 jobs:
   pipeline-execution:
@@ -35,7 +34,7 @@ jobs:
           enable-cache: true
 
       - name: Set up Python
-        run: uv python install 3.11
+        run: uv python install 3.12
 
       - name: Install project dependencies
         run: |
@@ -46,14 +45,15 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
           MODE="${{ github.event.inputs.ingest_mode || 'synthetic' }}"
-          DAYS="${{ github.event.inputs.days || '7' }}"
           
           if [ "$MODE" = "live" ] && [ -n "$YOUTUBE_API_KEY" ]; then
+            DAYS="${{ github.event.inputs.days || '7' }}"
             echo "Running Live YouTube Ingestion (UU Quota-Optimized Playlist Chaining)..."
             uv run python -m src.ingest.cli --mode live --days "$DAYS"
           else
+            DAYS="${{ github.event.inputs.days || '90' }}"
             echo "Running Local-First Synthetic Ingestion Mode (Zero Cloud Credentials Required)..."
-            uv run python -m src.ingest.cli --mode synthetic --channels 30 --days "$DAYS"
+            uv run python -m src.ingest.cli --mode synthetic --channels-count 30 --days "$DAYS"
           fi
 
       - name: Step 2 - Execute Point-in-Time Feature Store (dbt & DuckDB)

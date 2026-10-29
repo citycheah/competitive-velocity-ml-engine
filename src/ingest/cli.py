@@ -63,6 +63,8 @@ def parse_args(args: Optional[list] = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--channels-count",
+        "--channels",
+        dest="channels_count",
         type=int,
         default=30,
         help="Number of competitor channels to simulate or sample (default: 30, range 1-100)",

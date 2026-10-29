@@ -242,7 +242,7 @@ uv sync --all-extras
 ### 2. Generate Data & Execute Feature Store
 ```bash
 # Generate synthetic dataset (zero API credentials needed)
-uv run python -m src.ingest.cli --mode synthetic --channels 30 --days 90
+uv run python -m src.ingest.cli --mode synthetic --channels-count 30 --days 90
 
 # Execute dbt point-in-time transformations on local DuckDB
 uv run python scripts/run_dbt.py

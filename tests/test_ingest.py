@@ -530,3 +530,13 @@ def test_cli_argument_validation_errors():
     with pytest.raises(ValueError, match="days must be strictly positive"):
         parse_args_and_run = parse_args(["--days", "-5"])
         run_ingestion(parse_args_and_run)
+
+
+def test_cli_channels_alias_support():
+    """Verify both --channels-count and --channels alias parse unambiguously."""
+    args_count = parse_args(["--channels-count", "15"])
+    assert args_count.channels_count == 15
+
+    args_alias = parse_args(["--channels", "25"])
+    assert args_alias.channels_count == 25
+
