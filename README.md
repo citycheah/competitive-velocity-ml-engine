@@ -4,11 +4,27 @@
 [![DuckDB](https://img.shields.io/badge/DuckDB-1.0%2B-orange.svg)](https://duckdb.org/)
 [![dbt-core](https://img.shields.io/badge/dbt--core-1.8%2B-FF694B.svg)](https://www.getdbt.com/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-4.3%2B-brightgreen.svg)](https://lightgbm.readthedocs.io/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.35%2B-FF4B4B.svg)](https://streamlit.io/)
+[![Portal](https://img.shields.io/badge/Portal-Next.js_15_%2Fvelocity-000000?logo=nextdotjs&logoColor=white)](https://github.com/citycheah/brand-analytics-agent)
 [![CI Verification](https://img.shields.io/badge/verification-13%2F13%20passed-success.svg)](#-automated-verification--test-suite)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 An open-source reference machine learning architecture predicting **channel-adjusted breakout engagement** at the exact moment of publication ($t_0$) across YouTube competitor streams. Operates 100% **Local-First** using **DuckDB**, a point-in-time **dbt** feature store, and calibrated **LightGBM**, complete with SHAP explainability and Population Stability Index (PSI) drift monitoring.
+
+---
+
+## Creative & Marketing Intelligence Suite (`v0.1.0`) — Module Map
+
+Part of the 7-repository **`creative-intel-suite`** (flagship UI & copilot in [`brand-analytics-agent`](https://github.com/citycheah/brand-analytics-agent)):
+
+| Component | Role in `creative-intel-suite` (`v0.1.0`) | Stack |
+| :--- | :--- | :--- |
+| **[`brand-analytics-agent`](https://github.com/citycheah/brand-analytics-agent)** | **Flagship Product Shell** — 5-page Next.js 15 Portal, FastAPI REST/SSE & Google ADK Copilot | Next.js 15, FastAPI, Google ADK, DuckDB |
+| **[`intel-core`](https://github.com/citycheah/intel-core)** | **Core SDK** — Canonical contracts, DuckDB HITL views, FinOps, Hill optimizer, Golden Vision evals | Pydantic v2, PyArrow, DuckDB, Gemini |
+| **[`intel-etl-spark`](https://github.com/citycheah/intel-etl-spark)** | **Medallion Batch ETL** — Bronze->Silver->Gold Spark jobs, EU Auto DGP & DuckDB local parity | PySpark 3.5, DuckDB, PyArrow |
+| **[`intel-mmm`](https://github.com/citycheah/intel-mmm)** | **Causal Incrementality** — 3-tier Bayesian MMM ladder, separate theme attribution & ROAS guardrails | PyMC-Marketing, `nutpie`, Ridge |
+| **[`creative-intelligence-toolkit`](https://github.com/citycheah/creative-intelligence-toolkit)** | **Ingestion Connectors** — Meta EU DSA Ad Library, Google Trends, YouTube/TikTok/IG/FB & alerts | Gemini, Playwright, `yt-dlp`, `intel-core` |
+| **[`creative-analytics-grouping`](https://github.com/citycheah/creative-analytics-grouping)** | **Theme & Fatigue Engine** — Anti-join unseen dissection, 30-D UMAP+HDBSCAN & wearout tracking | Vertex/Gemini, HDBSCAN, UMAP |
+| **[`competitive-velocity-ml-engine`](https://github.com/citycheah/competitive-velocity-ml-engine)** | **Velocity & Drift Engine** — YouTube $t_0$ breakout prediction, dbt PIT features & PSI drift | dbt-duckdb, LightGBM, SHAP |
 
 ---
 
@@ -20,7 +36,7 @@ An open-source reference machine learning architecture predicting **channel-adju
 5. [4-Tier Model Ladder & Calibration Benchmarks](#-4-tier-model-ladder--calibration-benchmarks)
 6. [Explainability & Error Cohort Analysis (SHAP)](#-explainability--error-cohort-analysis-shap)
 7. [Population Stability Index (PSI) Drift Monitoring](#-population-stability-index-psi-drift-monitoring)
-8. [Interactive Observability Dashboard (Streamlit)](#-interactive-observability-dashboard-streamlit)
+8. [Unified Next.js 15 Portal & Legacy Observability](#-unified-nextjs-15-portal--legacy-observability)
 9. [Automated Verification & Test Suite](#-automated-verification--test-suite)
 10. [Quickstart & Reproduction](#-quickstart--reproduction)
 
@@ -66,7 +82,7 @@ flowchart TD
     end
 
     subgraph S4["4. Observability & Monitoring"]
-        J --> K["Streamlit Dashboard<br/>(Triage, SHAP Waterfall, Calibration, Drift)"]
+        J --> K["Next.js 15 Portal (/themes & /velocity)<br/>(Breakout Alerts, Drift & Governance)"]
         J --> L["PSI Drift Monitor<br/>(Quantile Binning, Alerts > 0.20)"]
         J --> M["GitHub Actions Automation<br/>(Daily Ingestion, Marts, Retraining)"]
     end
@@ -181,19 +197,13 @@ $$\text{PSI} = \sum_{b=1}^{B} (T_b - B_b) \times \ln\left(\frac{T_b}{B_b}\right)
 
 ---
 
-## 🖥️ Interactive Observability Dashboard (Streamlit)
+## 🖥️ Unified Next.js 15 Portal & Legacy Observability
 
-Launch the 4-tab Streamlit web application:
+**Primary UI:** Breakout predictions (`velocity_scores.parquet`) and PSI feature drift telemetry (`drift_report.json`) surface natively in the unified **Next.js 15 Executive Portal** inside [`brand-analytics-agent`](https://github.com/citycheah/brand-analytics-agent):
+- **`/themes#youtube-momentum`**: Correlates organic YouTube sub-brand breakout alerts alongside paid ad wearout & creative theme whitespace.
+- **`/velocity`**: Full **System Health & Model Governance** dashboard displaying the PSI Top-10 feature drift monitor, FinOps LLM ledger, Golden Vision evaluation gates, and scored YouTube breakout queue.
 
-```bash
-cd competitive-velocity-ml-engine
-uv run streamlit run app/streamlit_app.py
-```
-
-- **Tab 1: Live Breakout Triage:** Interactive feed of newly published competitor media with calibrated breakout probabilities, alert threshold slider ($\tau$), and channel/format filtering.
-- **Tab 2: SHAP Attribution Explorer:** Waterfall plot deconstructing individual video predictions into positive and negative log-odds drivers, alongside global feature ranking.
-- **Tab 3: Model Ladder & Calibration:** Side-by-side ladder comparisons, Brier score reduction, and lift curves across operational thresholds.
-- **Tab 4: Feature Drift & Quality (PSI):** Live feature distribution comparisons and PSI warning banners across recent inference batches.
+> *Legacy Standalone Observability (Optional):* `app/streamlit_app.py` remains available for offline SHAP waterfall debugging via `uv run streamlit run app/streamlit_app.py`, though primary product workflows run through the Next.js 15 Portal.
 
 ---
 
