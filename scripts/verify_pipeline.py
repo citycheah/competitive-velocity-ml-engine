@@ -1,7 +1,7 @@
 """Autonomous End-to-End Verification Pipeline Script for Competitive Content Velocity Engine.
 
 Executes all core pipeline stages in an isolated, offline-first environment:
-  1. Preflight Dependency Check (DuckDB, dbt, LightGBM, scikit-learn, joblib, shap, streamlit)
+  1. Preflight Dependency Check (DuckDB, dbt, LightGBM, scikit-learn, joblib, shap, intel-core)
   2. Synthetic Multi-Channel Data Ingestion (30 channels, Poisson arrivals, blitz bursts)
   3. t0 Physical Quarantine Enforcement (T0QuarantineValidator)
   4. dbt Point-in-Time Feature Store Compilation & Execution (DuckDB Engine)
@@ -12,37 +12,37 @@ Executes all core pipeline stages in an isolated, offline-first environment:
   9. Model Artifact Serialization & Integrity Check
   10. SHAP TreeExplainer Interpretability & Additivity Verification
   11. Population Stability Index (PSI) Drift Monitoring & Profile Check
-  12. Streamlit Dashboard Headless Execution Preflight
+  12. Gold Velocity & Drift Artifact Serialization (velocity_scores.parquet + drift_report.json)
   13. Verification Summary Report Generation
 """
 
 from __future__ import annotations
 
 import json
-import logging
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+import duckdb
+import joblib
+import pandas as pd
+
+from intel_velocity.evaluation.exports import export_gold_velocity_artifacts
+from intel_velocity.features.feature_pipeline import FeaturePipeline, chronological_train_test_split
+from intel_velocity.ingest.schemas import T0QuarantineValidator
+from intel_velocity.ingest.synthetic_generator import (
+    SyntheticDataGenerator,
+    SyntheticGeneratorConfig,
+)
+from intel_velocity.monitoring.drift_psi import FeatureDriftMonitor
+from intel_velocity.monitoring.shap_explainability import ModelExplainer
+from intel_velocity.training.threshold_optimizer import DecisionThresholdOptimizer
+from intel_velocity.training.train_and_calibrate import train_benchmark_ladder
 
 # Add project root to sys.path
 root_dir = Path(__file__).resolve().parent.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
-
-import duckdb
-import joblib
-import numpy as np
-import pandas as pd
-
-from src.evaluation.diagnostics import ModelEvaluator
-from src.features.feature_pipeline import FeaturePipeline, chronological_train_test_split
-from src.ingest.schemas import T0QuarantineValidator
-from src.ingest.synthetic_generator import SyntheticDataGenerator, SyntheticGeneratorConfig
-from src.monitoring.drift_psi import FeatureDriftMonitor
-from src.monitoring.shap_explainability import ModelExplainer
-from src.training.threshold_optimizer import DecisionThresholdOptimizer
-from src.training.train_and_calibrate import train_benchmark_ladder
 
 
 def run_pipeline() -> int:
@@ -62,10 +62,11 @@ def run_pipeline() -> int:
     try:
         # Stage 1: Preflight
         print("\n[Stage 1/13] Preflight Dependency Check...")
+        import intel_core
         import lightgbm
         import shap
         import sklearn
-        import streamlit
+        _ = intel_core.__file__
         report_data["stages"]["stage_1_preflight"] = "PASSED"
         print(f"  [+] Scikit-learn: {sklearn.__version__} | LightGBM: {lightgbm.__version__} | SHAP: {shap.__version__} | DuckDB: {duckdb.__version__}")
 
@@ -198,15 +199,29 @@ def run_pipeline() -> int:
         report_data["stages"]["stage_11_drift"] = "PASSED"
         print(f"  [+] PSI Drift Monitor verified: holdout mean PSI = {report.mean_psi:.4f} (Status: {report.overall_status.upper()}).")
 
-        # Stage 12: Streamlit Dashboard Headless Check
-        print("\n[Stage 12/13] Streamlit Observability Dashboard Headless Verification...")
-        from app.streamlit_app import load_data_and_artifacts
-        st_df, st_model, st_pipe, st_thresh, st_metrics = load_data_and_artifacts()
-        assert len(st_df) > 0
-        assert st_model is not None
-        assert st_pipe is not None
-        report_data["stages"]["stage_12_streamlit"] = "PASSED"
-        print(f"  [+] Streamlit app verified: {len(st_df)} records, model pipeline loaded headlessly.")
+        # Stage 12: Gold Velocity & Drift Artifact Serialization
+        print("\n[Stage 12/13] Exporting Gold Velocity Scores & Drift Report...")
+        lakehouse_gold_velocity = (
+            root_dir.parent / "data" / "eu_auto_lakehouse" / "gold" / "velocity_artifacts"
+            if (root_dir.parent / "data" / "eu_auto_lakehouse").exists()
+            else None
+        )
+        export_paths = export_gold_velocity_artifacts(
+            holdout_df,
+            y_prob_champ,
+            alert_threshold=threshold_res.optimal_threshold,
+            drift_report=report,
+            output_dir=root_dir / "data" / "gold_velocity",
+            benchmark_scores=scores,
+            mirror_dir=lakehouse_gold_velocity,
+        )
+        assert export_paths["velocity_scores_path"].exists()
+        assert export_paths["drift_report_path"].exists()
+        report_data["stages"]["stage_12_gold_export"] = "PASSED"
+        print(
+            f"  [+] Gold exports verified: {export_paths['velocity_scores_path']} & "
+            f"{export_paths['drift_report_path']}"
+        )
 
         # Stage 13: Summary Report Generation
         print("\n[Stage 13/13] Generating Final Master Verification Summary...")

@@ -10,10 +10,9 @@ import json
 import logging
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 
 import numpy as np
-from sklearn.metrics import precision_recall_curve
 
 logger = logging.getLogger("threshold_optimizer")
 

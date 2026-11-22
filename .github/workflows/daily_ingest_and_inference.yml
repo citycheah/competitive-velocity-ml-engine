@@ -49,11 +49,11 @@ jobs:
           if [ "$MODE" = "live" ] && [ -n "$YOUTUBE_API_KEY" ]; then
             DAYS="${{ github.event.inputs.days || '7' }}"
             echo "Running Live YouTube Ingestion (UU Quota-Optimized Playlist Chaining)..."
-            uv run python -m src.ingest.cli --mode live --days "$DAYS"
+            uv run python -m intel_velocity.ingest.cli --mode live --days "$DAYS"
           else
             DAYS="${{ github.event.inputs.days || '90' }}"
             echo "Running Local-First Synthetic Ingestion Mode (Zero Cloud Credentials Required)..."
-            uv run python -m src.ingest.cli --mode synthetic --channels-count 30 --days "$DAYS"
+            uv run python -m intel_velocity.ingest.cli --mode synthetic --channels-count 30 --days "$DAYS"
           fi
 
       - name: Step 2 - Execute Point-in-Time Feature Store (dbt & DuckDB)
@@ -64,14 +64,14 @@ jobs:
       - name: Step 3 - Retrain / Evaluate Model Ladder & Calibrate
         run: |
           echo "Evaluating champion model and checking probability calibration..."
-          uv run python -m src.training.train_and_calibrate
+          uv run python -m intel_velocity.training.train_and_calibrate
 
       - name: Step 4 - Execute PSI Feature Drift Monitoring
         run: |
           echo "Calculating Population Stability Index (PSI) against baseline profile..."
           uv run python -c "
           import pandas as pd, duckdb, joblib
-          from src.monitoring.drift_psi import FeatureDriftMonitor
+          from intel_velocity.monitoring.drift_psi import FeatureDriftMonitor
           
           con = duckdb.connect('data/feature_store.duckdb', read_only=True)
           df = con.execute('SELECT * FROM main.fct_video_features_t0 ORDER BY published_epoch DESC LIMIT 500').df()
@@ -91,13 +91,18 @@ jobs:
               print(f'ALERT: Critical drift detected on: {report.drifted_features}')
           "
 
-      - name: Step 5 - Headless Smoke Test for Streamlit Dashboard
+      - name: Step 5 - Verify Gold Velocity Export & Model Artifacts
         run: |
-          echo "Verifying Streamlit dashboard headlessly..."
+          echo "Verifying Gold velocity exporter and serialized model artifacts..."
           uv run python -c "
-          from app.streamlit_app import load_data_and_artifacts
-          df, model, pipe, thresh, metrics = load_data_and_artifacts()
-          print(f'Streamlit verified: {len(df)} records, model loaded successfully.')
+          import json, joblib
+          from pathlib import Path
+          from intel_velocity.evaluation.exports import export_gold_velocity_artifacts
+
+          model = joblib.load('models/calibrated_lgbm_v2.joblib')
+          thresh = json.loads(Path('models/threshold_config.json').read_text(encoding='utf-8'))
+          assert callable(export_gold_velocity_artifacts)
+          print(f'Artifacts verified: {type(model).__name__}, threshold={thresh}')
           "
 
       - name: Upload Pipeline Artifacts & Reports

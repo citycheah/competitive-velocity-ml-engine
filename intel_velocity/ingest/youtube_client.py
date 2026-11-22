@@ -15,17 +15,15 @@ import os
 import random
 import re
 import time
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta, timezone
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
 import yaml
 
-from src.ingest.schemas import T0QuarantineValidator
+from intel_velocity.ingest.schemas import T0QuarantineValidator
 
 try:
     from dotenv import load_dotenv
@@ -62,7 +60,7 @@ class QuotaExhaustedException(Exception):
 
 def parse_iso8601_duration(duration_str: Optional[str]) -> int:
     """Parses an ISO 8601 duration string into integer seconds.
-    
+
     Examples:
         'PT45S'    -> 45
         'PT1M'     -> 60
@@ -88,7 +86,7 @@ def parse_iso8601_duration(duration_str: Optional[str]) -> int:
 
 def derive_uploads_playlist_id(channel_id: str) -> str:
     """Derives the channel's uploads playlist ID by replacing 'UC' prefix with 'UU'.
-    
+
     In YouTube Data API v3, a channel ID starts with 'UC' and its uploads playlist ID
     begins with 'UU' followed by the identical character sequence.
     """
@@ -114,7 +112,7 @@ class YouTubeClientConfig:
 
 class YouTubeClient:
     """Production-grade YouTube Data API v3 Client.
-    
+
     Uses uploads-playlist batch chaining to preserve 98% of API quota and
     strictly quarantines post-t0 attributes to eliminate maturity bias.
     """
@@ -201,7 +199,7 @@ class YouTubeClient:
 
     def fetch_channel_metadata(self, channel_ids: List[str]) -> List[Dict[str, Any]]:
         """Step 1: Fetches channel metadata and uploads playlist IDs in batches of 50.
-        
+
         Quota cost: 1 unit per 50 channels.
         """
         if not self.service:
@@ -258,7 +256,7 @@ class YouTubeClient:
         watermark: Optional[datetime] = None,
     ) -> List[Dict[str, Any]]:
         """Step 2: Paginates playlistItems.list reverse-chronologically.
-        
+
         Halts immediately on high-watermark match (early-exit optimization).
         Quota cost: 1 unit per 50 videos.
         """
@@ -324,7 +322,7 @@ class YouTubeClient:
         channel_metadata_map: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """Step 3: Hydrates video records via videos.list in batches of 50.
-        
+
         Parses ISO 8601 duration, flags Shorts, and quarantines post-t0 engagement metrics.
         Quota cost: 1 unit per 50 videos.
         """

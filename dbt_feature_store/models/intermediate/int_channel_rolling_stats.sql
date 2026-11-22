@@ -11,9 +11,14 @@ WITH raw_engagements AS (
         COALESCE(target_likes_30d, target_likes_7d, 0) AS target_likes_clean,
         COALESCE(target_comments_30d, target_comments_7d, 0) AS target_comments_clean,
 
+        -- Maturity age in days at compute time; excludes immature (<30d) live peer uploads from baselines
+        CAST(
+            DATE_DIFF('day', CAST(published_at AS TIMESTAMP), CAST(CURRENT_TIMESTAMP AS TIMESTAMP))
+            AS INTEGER
+        ) AS age_days,
+
         -- 1. Linear weighted engagement composite score: E = V + 10*L + 20*C
-        -- Note: For historical prior uploads in the feature store, realized metrics serve as
-        -- an offline proxy for channel baseline capacity strictly prior to the current upload t0.
+        -- Mature-only (>= 30 days) copies ensure recent unmatured live pulls do not bias channel baselines.
         COALESCE(
             CAST(target_weighted_engagement AS DOUBLE),
             CAST(
@@ -22,6 +27,25 @@ WITH raw_engagements AS (
                 + 20.0 * COALESCE(target_comments_30d, target_comments_7d, 0) AS DOUBLE
             )
         ) AS weighted_engagement,
+
+        CASE
+            WHEN DATE_DIFF('day', CAST(published_at AS TIMESTAMP), CAST(CURRENT_TIMESTAMP AS TIMESTAMP)) >= 30
+            THEN COALESCE(target_views_30d, target_views_7d, 0)
+            ELSE NULL
+        END AS mature_target_views_clean,
+
+        CASE
+            WHEN DATE_DIFF('day', CAST(published_at AS TIMESTAMP), CAST(CURRENT_TIMESTAMP AS TIMESTAMP)) >= 30
+            THEN COALESCE(
+                CAST(target_weighted_engagement AS DOUBLE),
+                CAST(
+                    COALESCE(target_views_30d, target_views_7d, 0)
+                    + 10.0 * COALESCE(target_likes_30d, target_likes_7d, 0)
+                    + 20.0 * COALESCE(target_comments_30d, target_comments_7d, 0) AS DOUBLE
+                )
+            )
+            ELSE NULL
+        END AS mature_weighted_engagement,
 
         -- 2. Log-weighted composite engagement: ln(1 + E)
         LN(
@@ -37,7 +61,26 @@ WITH raw_engagements AS (
                     )
                 )
             )
-        ) AS log_weighted_engagement
+        ) AS log_weighted_engagement,
+
+        CASE
+            WHEN DATE_DIFF('day', CAST(published_at AS TIMESTAMP), CAST(CURRENT_TIMESTAMP AS TIMESTAMP)) >= 30
+            THEN LN(
+                1.0
+                + GREATEST(
+                    0.0,
+                    COALESCE(
+                        CAST(target_weighted_engagement AS DOUBLE),
+                        CAST(
+                            COALESCE(target_views_30d, target_views_7d, 0)
+                            + 10.0 * COALESCE(target_likes_30d, target_likes_7d, 0)
+                            + 20.0 * COALESCE(target_comments_30d, target_comments_7d, 0) AS DOUBLE
+                        )
+                    )
+                )
+            )
+            ELSE NULL
+        END AS mature_log_weighted_engagement
 
     FROM {{ ref('stg_youtube_videos') }}
 ),
@@ -48,63 +91,64 @@ windowed_channel_stats AS (
         channel_id,
         published_at,
         published_epoch,
+        age_days,
         target_views_clean,
         target_likes_clean,
         target_comments_clean,
         weighted_engagement,
         log_weighted_engagement,
 
-        -- 1. Preceding 30-day upload count (2,592,000s) strictly excluding t0
-        COUNT(*) OVER (
+        -- 1. Preceding 30-day mature upload count (2,592,000s) strictly excluding t0 and peers with age_days < 30
+        COUNT(mature_log_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN 2592000 PRECEDING AND 1 PRECEDING
         ) AS channel_upload_count_30d,
 
-        -- 2. Trailing 30-day rolling mean of log-weighted engagement strictly excluding t0
-        AVG(log_weighted_engagement) OVER (
+        -- 2. Trailing 30-day rolling mean of mature log-weighted engagement strictly excluding t0
+        AVG(mature_log_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN 2592000 PRECEDING AND 1 PRECEDING
         ) AS channel_rolling_avg_log_engagement_30d,
 
-        -- 3. Trailing 30-day sample standard deviation strictly excluding t0
-        STDDEV_SAMP(log_weighted_engagement) OVER (
+        -- 3. Trailing 30-day sample standard deviation of mature log-weighted engagement strictly excluding t0
+        STDDEV_SAMP(mature_log_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN 2592000 PRECEDING AND 1 PRECEDING
         ) AS channel_rolling_std_log_engagement_30d,
 
-        -- 4. Trailing 30-day average raw views strictly excluding t0
-        AVG(target_views_clean) OVER (
+        -- 4. Trailing 30-day average raw views over mature peers strictly excluding t0
+        AVG(mature_target_views_clean) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN 2592000 PRECEDING AND 1 PRECEDING
         ) AS channel_historical_avg_views_30d,
 
-        -- 5. Trailing 30-day average raw weighted engagement strictly excluding t0
-        AVG(weighted_engagement) OVER (
+        -- 5. Trailing 30-day average raw weighted engagement over mature peers strictly excluding t0
+        AVG(mature_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN 2592000 PRECEDING AND 1 PRECEDING
         ) AS channel_historical_avg_engagement_raw_30d,
 
-        -- 6. Lifetime channel upload count strictly excluding t0
-        COUNT(*) OVER (
+        -- 6. Lifetime mature channel upload count strictly excluding t0
+        COUNT(mature_log_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
         ) AS channel_lifetime_upload_count,
 
-        -- 7. Lifetime channel baseline mean strictly excluding t0 (fallback when 30d < 3)
-        AVG(log_weighted_engagement) OVER (
+        -- 7. Lifetime mature channel baseline mean strictly excluding t0 (fallback when 30d < 3)
+        AVG(mature_log_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
         ) AS channel_lifetime_avg_log_engagement,
 
-        -- 8. Lifetime channel baseline sample stddev strictly excluding t0 (fallback when 30d < 3)
-        STDDEV_SAMP(log_weighted_engagement) OVER (
+        -- 8. Lifetime mature channel baseline sample stddev strictly excluding t0 (fallback when 30d < 3)
+        STDDEV_SAMP(mature_log_weighted_engagement) OVER (
             PARTITION BY channel_id
             ORDER BY published_epoch
             RANGE BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING

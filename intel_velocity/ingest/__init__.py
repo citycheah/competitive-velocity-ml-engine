@@ -1,6 +1,6 @@
 """Ingestion subsystem: Live YouTube API v3 client, Synthetic Multi-Channel Generator, Schemas & Quarantine Gate."""
 
-from src.ingest.schemas import (
+from intel_velocity.ingest.schemas import (
     ChannelMetadata,
     IngestionResult,
     RawVideoRecord,
@@ -9,13 +9,13 @@ from src.ingest.schemas import (
     get_channel_pyarrow_schema,
     get_video_pyarrow_schema,
 )
-from src.ingest.synthetic_generator import (
+from intel_velocity.ingest.synthetic_generator import (
     ChannelProfile,
     SyntheticDataGenerator,
     SyntheticDataset,
     SyntheticGeneratorConfig,
 )
-from src.ingest.youtube_client import (
+from intel_velocity.ingest.youtube_client import (
     QuotaExhaustedException,
     YouTubeClient,
     YouTubeClientConfig,

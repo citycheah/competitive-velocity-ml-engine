@@ -10,18 +10,15 @@ Validates:
 
 from __future__ import annotations
 
-import os
-from pathlib import Path
-
 import duckdb
 import pytest
 
-from scripts.run_dbt import get_repo_root, prepare_environment, run_dbt_command
-from src.ingest.schemas import T0QuarantineValidator, T0LeakageError
-from src.ingest.synthetic_generator import (
+from intel_velocity.ingest.schemas import T0LeakageError, T0QuarantineValidator
+from intel_velocity.ingest.synthetic_generator import (
     SyntheticDataGenerator,
     SyntheticGeneratorConfig,
 )
+from scripts.run_dbt import get_repo_root, prepare_environment, run_dbt_command
 
 
 @pytest.fixture(scope="session")
@@ -225,7 +222,7 @@ def test_fct_video_features_t0_t0_quarantine_barrier(built_dbt_feature_store):
 
     # Isolate non-target, non-breakout feature columns
     feature_cols = [
-        c for c in col_names 
+        c for c in col_names
         if not c.startswith("target_") and c not in ("is_breakout", "engagement_zscore_30d")
     ]
 

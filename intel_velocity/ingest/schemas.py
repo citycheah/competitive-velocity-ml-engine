@@ -7,12 +7,11 @@ from __future__ import annotations
 
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Optional, Set
 
-import numpy as np
 import pandas as pd
 import pyarrow as pa
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 
 class T0LeakageError(ValueError):
@@ -90,7 +89,7 @@ class IngestionResult(BaseModel):
 
 class T0QuarantineValidator:
     """Enforces absolute physical and schema isolation of post-t0 attributes.
-    
+
     Guarantees zero maturity bias by banning unprefixed post-publication metrics
     and verifying data integrity across video and channel datasets.
     """
@@ -163,7 +162,7 @@ class T0QuarantineValidator:
     @classmethod
     def validate_videos(cls, df: pd.DataFrame) -> None:
         """Asserts dataframe conforms strictly to t0 quarantine standards.
-        
+
         Raises:
             T0LeakageError: If any forbidden un-prefixed post-t0 metric column is found.
             ValueError: If required columns are missing, inconsistent, contain nested structures, or unexpected nulls/negatives.
@@ -221,7 +220,7 @@ class T0QuarantineValidator:
                     raise ValueError(
                         f"Disallowed nested struct or list type in raw video DataFrame: column '{col}' has type '{pa_type}'"
                     )
-            if col_dtype == object:
+            if pd.api.types.is_object_dtype(col_dtype):
                 has_nested = df[col].apply(lambda x: isinstance(x, (dict, list, set, tuple))).any()
                 if has_nested:
                     raise ValueError(
@@ -271,8 +270,8 @@ class T0QuarantineValidator:
                 raise ValueError(f"Target column '{c}' contains {null_count} null values; targets must be non-null.")
             try:
                 numeric_vals = pd.to_numeric(df[c])
-            except (ValueError, TypeError):
-                raise ValueError(f"Target column '{c}' must contain numeric values.")
+            except (ValueError, TypeError) as err:
+                raise ValueError(f"Target column '{c}' must contain numeric values.") from err
             if (numeric_vals < 0).any():
                 neg_count = int((numeric_vals < 0).sum())
                 raise ValueError(
@@ -282,10 +281,10 @@ class T0QuarantineValidator:
     @classmethod
     def validate_feature_columns(cls, feature_columns: Any) -> None:
         """Validates that a collection of feature columns contains zero post-t0 mature metrics.
-        
+
         Args:
             feature_columns: Iterable of column name strings or a pandas DataFrame.
-            
+
         Raises:
             T0LeakageError: If any post-t0 mature metric (e.g., views, likes, comments,
                 shares, CTR, or target_ prefixed metrics) is detected in the feature set.
@@ -348,7 +347,7 @@ class T0QuarantineValidator:
     @classmethod
     def validate_channels(cls, df: pd.DataFrame) -> None:
         """Validates channel dataset schema and constraints.
-        
+
         Raises:
             ValueError: If required columns are missing or if duplicate channel_ids exist.
         """

@@ -10,32 +10,24 @@ Covers:
   - Unified CLI synthetic execution and argument validation
 """
 
-import os
 import shutil
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from src.ingest.cli import parse_args, run_ingestion
-from src.ingest.schemas import (
-    ChannelMetadata,
-    RawVideoRecord,
+from intel_velocity.ingest.cli import parse_args, run_ingestion
+from intel_velocity.ingest.schemas import (
     T0LeakageError,
     T0QuarantineValidator,
-    get_channel_pyarrow_schema,
-    get_video_pyarrow_schema,
 )
-from src.ingest.synthetic_generator import (
-    ChannelProfile,
+from intel_velocity.ingest.synthetic_generator import (
     SyntheticDataGenerator,
-    SyntheticGenerator,
-    SyntheticGeneratorConfig,
 )
-from src.ingest.youtube_client import (
+from intel_velocity.ingest.youtube_client import (
     QuotaExhaustedException,
     YouTubeClient,
     YouTubeClientConfig,

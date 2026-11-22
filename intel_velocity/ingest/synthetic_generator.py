@@ -19,7 +19,11 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import yaml
 
-from src.ingest.schemas import T0QuarantineValidator, get_channel_pyarrow_schema, get_video_pyarrow_schema
+from intel_velocity.ingest.schemas import (
+    T0QuarantineValidator,
+    get_channel_pyarrow_schema,
+    get_video_pyarrow_schema,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +114,7 @@ class SyntheticGeneratorConfig:
 
 class SyntheticDataGenerator:
     """Simulates a multi-channel competitive YouTube media stream.
-    
+
     Produces deterministic, schema-compliant Parquet outputs with
     quarantined target attributes and calibrated breakout frequencies.
     """

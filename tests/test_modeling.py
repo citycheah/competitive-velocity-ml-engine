@@ -18,16 +18,15 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.features.feature_pipeline import (
+from intel_velocity.features.feature_pipeline import (
     FeaturePipeline,
     chronological_train_test_split,
     get_time_series_cv,
 )
-from src.features.text_pipeline import TextEmbeddingPipeline
-from src.ingest.schemas import T0QuarantineValidator, T0LeakageError
-from src.training.threshold_optimizer import DecisionThresholdOptimizer, ThresholdMetrics
-from src.training.train_and_calibrate import (
-    HeuristicBaselineModel,
+from intel_velocity.features.text_pipeline import TextEmbeddingPipeline
+from intel_velocity.ingest.schemas import T0LeakageError, T0QuarantineValidator
+from intel_velocity.training.threshold_optimizer import DecisionThresholdOptimizer
+from intel_velocity.training.train_and_calibrate import (
     train_benchmark_ladder,
 )
 

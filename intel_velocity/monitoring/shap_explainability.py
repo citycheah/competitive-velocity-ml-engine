@@ -7,7 +7,7 @@ and local waterfall attributions for individual video breakout predictions.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -108,7 +108,7 @@ class ModelExplainer:
 
         contributions = [
             {"feature": name, "shap_value": float(val), "feature_value": float(x_val)}
-            for name, val, x_val in zip(names, shap_val, x_arr[0])
+            for name, val, x_val in zip(names, shap_val, x_arr[0], strict=False)
         ]
 
         # Sort into top positive and top negative contributors

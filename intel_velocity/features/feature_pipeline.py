@@ -6,15 +6,15 @@ Enforces strict physical t0 quarantine validation to ensure zero look-ahead matu
 from __future__ import annotations
 
 import logging
-from typing import Generator, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import TimeSeriesSplit
 
-from src.features.text_pipeline import TextEmbeddingPipeline
-from src.ingest.schemas import T0QuarantineValidator
+from intel_velocity.features.text_pipeline import TextEmbeddingPipeline
+from intel_velocity.ingest.schemas import T0QuarantineValidator
 
 logger = logging.getLogger("feature_pipeline")
 
@@ -43,12 +43,12 @@ CORE_BINARY_FEATURES = [
 
 class FeaturePipeline(BaseEstimator, TransformerMixin):
     """End-to-end feature preparation pipeline.
-    
+
     Transforms raw mart records into a unified modeling design matrix X by combining:
       1. 14 high-signal tabular features (cadence, momentum, format, temporal).
       2. Domain format-interaction features (v2 enhancement).
       3. 16-component TruncatedSVD dense text embeddings of video titles.
-      
+
     Guarantees strict t0 quarantine enforcement via T0QuarantineValidator.
     """
 
@@ -150,13 +150,13 @@ def chronological_train_test_split(
     maturity_days_filter: Optional[int] = None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Partitions dataset chronologically into training split and untouched holdout test split.
-    
+
     Args:
         df: Input DataFrame containing published_epoch or published_at.
         test_ratio: Fraction of the most recent chronological records reserved for test (default 0.15).
         maturity_days_filter: Optional days threshold. If provided, training split excludes records
             younger than maturity_days_filter days to eliminate lifetime accumulation bias.
-            
+
     Returns:
         Tuple of (train_df, test_df) sorted chronologically.
     """

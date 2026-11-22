@@ -32,6 +32,7 @@ ENV/
 data/raw/*.parquet
 data/raw/*.json
 data/processed/
+data/gold_velocity/
 data/*.duckdb
 data/*.duckdb.wal
 !data/fixtures/

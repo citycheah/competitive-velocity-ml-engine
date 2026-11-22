@@ -19,24 +19,23 @@ Orchestrates all 12 stages in an isolated, offline environment with zero cloud c
 """
 
 import math
-from datetime import datetime, timezone
-from pathlib import Path
 
 import duckdb
 import numpy as np
-import pandas as pd
-import pytest
 from lightgbm import LGBMClassifier
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import average_precision_score, brier_score_loss, precision_recall_curve, roc_auc_score
+from sklearn.metrics import (
+    average_precision_score,
+    brier_score_loss,
+    precision_recall_curve,
+)
 from sklearn.preprocessing import StandardScaler
 
-from src.ingest.schemas import T0QuarantineValidator
-from src.ingest.synthetic_generator import (
-    ChannelProfile,
+from intel_velocity.ingest.schemas import T0QuarantineValidator
+from intel_velocity.ingest.synthetic_generator import (
     SyntheticDataGenerator,
     SyntheticGeneratorConfig,
 )
@@ -50,7 +49,6 @@ class TestSmokePipeline:
         # =========================================================================
         # Step 1: Preflight Dependency Check
         # =========================================================================
-        import duckdb
         import lightgbm
         import shap
         import sklearn
@@ -178,7 +176,7 @@ class TestSmokePipeline:
         # =========================================================================
         # Step 7: Calibration Quality & PR-AUC Lift Verification (AST-08, AST-09)
         # =========================================================================
-        pr_auc_m3 = average_precision_score(y_holdout, y_prob_m3)
+        _pr_auc_m3 = average_precision_score(y_holdout, y_prob_m3)
         pr_auc_m4 = average_precision_score(y_holdout, y_prob_m4)
 
         brier_m3 = brier_score_loss(y_holdout, y_prob_m3)
@@ -194,12 +192,12 @@ class TestSmokePipeline:
         if valid_indices:
             best_idx = max(valid_indices, key=lambda i: recalls[i])
             opt_tau = float(thresholds[best_idx])
-            prec_realized = float(precisions[best_idx])
+            _prec_realized = float(precisions[best_idx])
             status = "FLOOR_MET"
         else:
             best_idx = int(np.argmax(precisions[:-1]))
             opt_tau = float(thresholds[best_idx])
-            prec_realized = float(precisions[best_idx])
+            _prec_realized = float(precisions[best_idx])
             status = "FALLBACK_MAX_PRECISION"
 
         assert 0.0 <= opt_tau <= 1.0

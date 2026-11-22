@@ -56,10 +56,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from src.features.feature_pipeline import FeaturePipeline, chronological_train_test_split
-from src.monitoring.shap_explainability import ModelExplainer
-from src.monitoring.drift_psi import FeatureDriftMonitor
-from src.training.threshold_optimizer import DecisionThresholdOptimizer
+from intel_velocity.features.feature_pipeline import FeaturePipeline, chronological_train_test_split
+from intel_velocity.monitoring.shap_explainability import ModelExplainer
+from intel_velocity.monitoring.drift_psi import FeatureDriftMonitor
+from intel_velocity.training.threshold_optimizer import DecisionThresholdOptimizer
 
 print("Imports successfully loaded. Project root:", project_root)
 """)

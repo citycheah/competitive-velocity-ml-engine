@@ -28,7 +28,11 @@ jobs:
         run: |
           uv sync --all-extras
 
-      - name: Run Pytest Suite (45 Tests)
+      - name: Run Ruff Lint
+        run: |
+          uv run ruff check intel_velocity scripts tests app
+
+      - name: Run Pytest Suite
         run: |
           uv run pytest tests/
 

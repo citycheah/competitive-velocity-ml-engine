@@ -229,12 +229,12 @@ uv run pytest tests/
 ## 🚀 Quickstart & Reproduction
 
 ### Prerequisites
-- Python 3.10+
+- Python 3.11+ (`>=3.11,<3.13`)
 - [`uv`](https://docs.astral.sh/uv/) (Fast Python package manager)
 
 ### 1. Clone & Setup Environment
 ```bash
-git clone https://github.com/your-org/competitive-velocity-ml-engine.git
+git clone https://github.com/citycheah/competitive-velocity-ml-engine.git
 cd competitive-velocity-ml-engine
 uv sync --all-extras
 ```
@@ -242,7 +242,7 @@ uv sync --all-extras
 ### 2. Generate Data & Execute Feature Store
 ```bash
 # Generate synthetic dataset (zero API credentials needed)
-uv run python -m src.ingest.cli --mode synthetic --channels-count 30 --days 90
+uv run python -m intel_velocity.ingest.cli --mode synthetic --channels-count 30 --days 90
 
 # Execute dbt point-in-time transformations on local DuckDB
 uv run python scripts/run_dbt.py
@@ -251,11 +251,10 @@ uv run python scripts/run_dbt.py
 ### 3. Train, Calibrate & Monitor
 ```bash
 # Train 4-tier ladder, fit Isotonic calibration, optimize threshold
-uv run python -m src.training.train_and_calibrate
-
-# Launch Streamlit Observability Dashboard
-uv run streamlit run app/streamlit_app.py
+uv run python -m intel_velocity.training.train_and_calibrate
 ```
+
+> **Unified Portal:** The standalone Streamlit dashboard (`app/streamlit_app.py`) has been retired in favor of the unified Next.js Portal (`/velocity` in `brand-analytics-agent/frontend-portal/`), which reads `data/gold_velocity/velocity_scores.parquet` and `data/gold_velocity/drift_report.json`.
 
 ---
 

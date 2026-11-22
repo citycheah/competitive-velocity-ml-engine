@@ -7,7 +7,6 @@ baseline profile serialization, and SHAP TreeExplainer additivity.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import lightgbm as lgb
@@ -16,12 +15,12 @@ import pandas as pd
 import pytest
 from sklearn.calibration import CalibratedClassifierCV
 
-from src.monitoring.drift_psi import (
+from intel_velocity.monitoring.drift_psi import (
     FeatureDriftMonitor,
     calculate_categorical_psi,
     calculate_psi,
 )
-from src.monitoring.shap_explainability import ModelExplainer
+from intel_velocity.monitoring.shap_explainability import ModelExplainer
 
 
 def test_calculate_psi_identical_distribution():

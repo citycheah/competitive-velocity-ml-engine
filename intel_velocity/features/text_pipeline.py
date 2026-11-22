@@ -19,7 +19,7 @@ logger = logging.getLogger("text_pipeline")
 
 class TextEmbeddingPipeline(BaseEstimator, TransformerMixin):
     """Compresses raw video titles into low-dimensional dense vectors using TF-IDF + TruncatedSVD.
-    
+
     Adheres strictly to scikit-learn transformer protocol. Fitting strictly on the training
     split ensures that vocabulary distributions and singular value coordinates do not leak
     into validation folds or out-of-time test sets.

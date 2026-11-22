@@ -15,11 +15,9 @@ import time
 from pathlib import Path
 from typing import Optional
 
-import pandas as pd
-
-from src.ingest.schemas import IngestionResult, T0QuarantineValidator
-from src.ingest.synthetic_generator import SyntheticDataGenerator
-from src.ingest.youtube_client import YouTubeClient
+from intel_velocity.ingest.schemas import IngestionResult, T0QuarantineValidator
+from intel_velocity.ingest.synthetic_generator import SyntheticDataGenerator
+from intel_velocity.ingest.youtube_client import YouTubeClient
 
 try:
     from dotenv import load_dotenv
@@ -208,7 +206,7 @@ def main() -> int:
             print(f"Videos Count:           {result.videos_count}")
             print(f"Videos File:            {result.videos_file_path}")
             print(f"Channels File:          {result.channels_file_path}")
-            print(f"t0 Quarantine Status:   PASSED")
+            print("t0 Quarantine Status:   PASSED")
             print(f"Execution Time:         {result.execution_time_seconds:.3f}s")
             if result.mode == "live":
                 print(f"Quota Units Used:       {result.quota_units_used}")

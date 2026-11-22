@@ -48,10 +48,15 @@ def prepare_environment(repo_root: Path) -> dict[str, str]:
     raw_channels = (raw_dir / "youtube_channels.parquet").resolve()
 
     # Normalize to forward slashes for cross-platform SQLite/DuckDB/BigQuery compatibility
+    duckdb_ext_dir = (data_dir / ".duckdb").resolve()
+    duckdb_ext_dir.mkdir(parents=True, exist_ok=True)
     env["DBT_DUCKDB_PATH"] = str(db_path).replace("\\", "/")
     env["RAW_VIDEOS_PATH"] = str(raw_videos).replace("\\", "/")
     env["RAW_CHANNELS_PATH"] = str(raw_channels).replace("\\", "/")
     env["DBT_RAW_SCHEMA"] = env.get("DBT_RAW_SCHEMA", "main")
+    env["DUCKDB_EXT_DIR"] = str(duckdb_ext_dir).replace("\\", "/")
+    env["HOME"] = str(data_dir.resolve())
+    env["USERPROFILE"] = str(data_dir.resolve())
 
     return env
 

@@ -6,8 +6,8 @@ competitive_velocity:
       path: "{{ env_var('DBT_DUCKDB_PATH', 'data/feature_store.duckdb') }}"
       schema: "{{ env_var('DBT_SCHEMA', 'main') }}"
       threads: 4
-      extensions:
-        - parquet
+      settings:
+        extension_directory: "{{ env_var('DUCKDB_EXT_DIR', 'data/.duckdb') }}"
     prod:
       type: bigquery
       method: oauth

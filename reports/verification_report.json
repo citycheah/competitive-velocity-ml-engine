@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-26T13:32:35.822840+00:00",
+  "timestamp": "2026-11-13T10:02:39.503449+00:00",
   "stages": {
     "stage_1_preflight": "PASSED",
     "stage_2_ingestion": "PASSED",
@@ -12,7 +12,7 @@
     "stage_9_serialization": "PASSED",
     "stage_10_shap": "PASSED",
     "stage_11_drift": "PASSED",
-    "stage_12_streamlit": "PASSED",
+    "stage_12_gold_export": "PASSED",
     "stage_13_summary": "PASSED"
   },
   "metrics": {

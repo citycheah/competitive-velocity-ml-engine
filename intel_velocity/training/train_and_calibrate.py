@@ -17,7 +17,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import os
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -33,10 +32,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from src.evaluation.diagnostics import ModelBenchmarkScore, ModelEvaluator
-from src.features.feature_pipeline import FeaturePipeline, chronological_train_test_split
-from src.monitoring.drift_psi import FeatureDriftMonitor
-from src.training.threshold_optimizer import DecisionThresholdOptimizer, OptimizedThresholdResult
+from intel_velocity.evaluation.diagnostics import ModelBenchmarkScore, ModelEvaluator
+from intel_velocity.features.feature_pipeline import FeaturePipeline, chronological_train_test_split
+from intel_velocity.monitoring.drift_psi import FeatureDriftMonitor
+from intel_velocity.training.threshold_optimizer import (
+    DecisionThresholdOptimizer,
+)
 
 logger = logging.getLogger("train_and_calibrate")
 
@@ -158,8 +159,6 @@ def train_benchmark_ladder(
     # Tier 3: LightGBM Classifier v1 (Baseline GBDT without calibration)
     # --------------------------------------------------------------------------
     logger.info("Training Tier 3: LightGBM v1 Baseline...")
-    # Use unaugmented tabular features for v1 (first N - 2 columns before interaction terms)
-    v1_feature_mask = np.ones(X_train.shape[1], dtype=bool)
     # In FeaturePipeline, format_interaction_surprise & cadence_blitz_acceleration are at indices 14, 15
     # For v1, exclude interaction indices
     v1_cols = [i for i in range(X_train.shape[1]) if i not in (14, 15)]

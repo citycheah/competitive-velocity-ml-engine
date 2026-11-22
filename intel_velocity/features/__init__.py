@@ -1,13 +1,13 @@
 """Feature engineering and point-in-time assembly subsystem."""
 
-from src.features.text_pipeline import TextEmbeddingPipeline
-from src.features.feature_pipeline import (
+from intel_velocity.features.feature_pipeline import (
+    CORE_BINARY_FEATURES,
+    CORE_NUMERIC_FEATURES,
     FeaturePipeline,
     chronological_train_test_split,
     get_time_series_cv,
-    CORE_NUMERIC_FEATURES,
-    CORE_BINARY_FEATURES,
 )
+from intel_velocity.features.text_pipeline import TextEmbeddingPipeline
 
 __all__ = [
     "TextEmbeddingPipeline",
